@@ -16,17 +16,17 @@
     		<dd @click = "showRating">评价</dd>
     	</dl>
     	<!-- 商家的详情部分食物部分 -->
-    	<div class="detail-goods clearfix" v-if="isShowFood">
-    		    <!-- 商家的详情部分食物左边 -->
-    			<ul class="detail-left">
+    	<div class="detail-goods clearfix" v-if="isShowFood" v-bind:style="{ height: computedContentHeight + 'px' }">
+    		    <!-- 商家的详情部分菜单分类 -->
+    			<ul class="detail-left" ref="businessLeft">
     				<li v-for = "(item,index) in business_info.commodity" @click="leftControlRightScroll(index)">
     					<h2>{{item.name}}</h2>
     				</li>
     			</ul>
-    			<!-- 商家的详情部分食物右边 -->
-    			<ul class="detail-right">
+    			<!-- 商家的详情部分单个菜品 -->
+    			<ul class="detail-right" ref="ullist">
     				<li v-for = "(item,index) in business_info.commodity">
-    					<h2>{{item.name}}</h2>
+    					<h2 class="type_title">{{item.name}}</h2>
     					<div class="detail-singles">
     						<div v-for = "food in item.foods" class="detail-single clearfix">
     							<div class="food-pic">
@@ -96,15 +96,22 @@ export default {
     return {
       msg: 'Welcome to Your detai',
       business_info:'',
-      isShowFood:false,
-      isShowRating:true
+      isShowFood:true,
+      isShowRating:false,
+      // 计算商品区域高度
+      computedContentHeight: window.innerHeight - (window.innerWidth / 10 * 4.2)
     }
   },
   created(){
   	let id=this.$route.params.id;
   	//对应id的店铺信息赋值给 business_info 方便取里面的值
-  	this.business_info = this.falseBussinessInfo[id]
-  	console.log(this.business_info)
+  	this.business_info = this.falseBussinessInfo[id];
+  	// 窗口大小改变，改变商品列高度
+    window.addEventListener('resize', this.watchHei, false);
+    var _this = this;
+    setTimeout(function(){
+    	_this.init()
+    },5000)
   },
   computed:{
   	...mapState([
@@ -119,13 +126,97 @@ export default {
   	showRating(){
   		this.isShowFood = false
   		this.isShowRating = true
-  	}
+  	},
+  	init(){
+     this.rightControlLeftClass();
+  	},
+  	// 右列表控制左列表样式
+	rightControlLeftClass(){
+      // 左目录列表
+      var leftUl = this.$refs.businessLeft;
+      // 左目录的所有li
+      var leftLI = leftUl.querySelectorAll("li");
+      // 右商品列表
+      var rightUl = this.$refs.ullist;
+      var ti = rightUl.querySelectorAll('.type_title');
+      // 定义当前滚动到的index值
+      var asIndex = 0;
+      // ↓ BUG（魅族自带浏览器 + UC无效果scroll不执行，安卓端chrome火狐正常 IOS 10.2正常)
+      // 原因 某些浏览器不支持 forEach (UC,魅族自带,微信等) 改用 for 循环
+      rightUl.addEventListener('scroll', () => {
+        // 当前scrollTop
+        var thisST = rightUl.scrollTop;
+        console.log('scrolltop',thisST)
+        // console.log('滚动条上去高度', this.scrollTop)
+        // 算每个标题offsetTop来决定当前asIndex
+        /* ti.forEach(function (e, i) {
+          // console.log(e.offsetTop)
+          if (thisST >= e.offsetTop) {
+            // console.log(i)
+            asIndex = i;
+          }
+        }); */
+        // i 1 2 3 4 5 6 
+        for (var i = 0; i < ti.length; i++) {
+          if (thisST >= ti[i].offsetTop) {
+            // console.log(i)
+            asIndex = i;
+          }
+        };
+        // 给左目录列表所有的li去掉激活样式
+        // for (var j = 0, x = leftLI.length; j < x; j++) {
+          // leftLI[j].classList.remove('active_ia');
+        // }
+        // 当前滚动到的li加激活样式
+        // leftLI[asIndex].classList.add('active_ia');
+
+      }, false);
+	},
+    // 左列表点击控制右列表滚动
+    leftControlRightScroll (index) {
+      /**
+       * [scrollMove 右侧Ul滚动，以当前scrollTop与目标的差值/10为滚动距离，滚动过远的话会有点生硬]
+       * @param  {[DOM]} ele    [目标元素ul]
+       * @param  {[Number]} target [滚动到的位置]
+       * @return {[void]}        [description]
+       */
+      var scrollMove = (ele, target) => {
+        // 根据当前scrollTop与目标点距离算出单次改变量
+        var vector = Math.round((target - ele.scrollTop) / 10);
+        console.log('vector', vector);
+        var scrollTimer = setInterval(() => {
+          ele.scrollTop += vector;
+          // 超出目标点后 或者 已经滚动到底清空定时器
+          // 上滑(scrollTop>=目标点 且 vector为正) 或 下滑(scrollTop <= 目标点 且 vector为负)或 滑到最底
+          if (((ele.scrollTop >= target) && vector > 0) || ((ele.scrollTop <= target) && vector < 0) || ((ele.scrollTop + ele.clientHeight + 1) >= ele.scrollHeight)) {
+            // +1 正确激活当前左栏状态
+            ele.scrollTop = target + 1;
+            clearInterval(scrollTimer);
+          }
+        }, 1000 / 100);
+      };
+      var rightUl_ = this.$refs.ullist;
+      // 右列表应该滚动到的标题的offsetTop
+      var rightTo_ = rightUl_.querySelectorAll('.type_title')[index].offsetTop;
+      scrollMove(rightUl_, rightTo_);
+    },
+    // 监控网页的resize来改变商品列表的高度
+    watchHei () {
+      clearTimeout(heightTimer); // 节流
+      var heightTimer = setTimeout(() => {
+        this.computedContentHeight = window.innerHeight - (window.innerWidth / 10 * 4.2);
+      }, 100);
+    }
   }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss" type="text/css">
+.detail{
+	width:100%;
+	height:100%;
+}
 .detail-top{
 	width:100%;
 	height:2.0rem;
@@ -167,6 +258,7 @@ export default {
 .detail-goods{
 		.detail-left{
 			width:1.6rem;
+			overflow-y: auto;
 			height:auto;
 			background: #f1f1f1;
 			float:left;
@@ -183,8 +275,9 @@ export default {
 		}
 		.detail-right{
 			width:4.8rem;
+            margin-left: 1.6rem;
+			overflow-y: auto;
 			height:auto;
-			float:right;
 			h2{
 				font-size:0.3rem;
 				color: #000;

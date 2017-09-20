@@ -4,7 +4,6 @@ import Home from '@/pages/Home'
 import Detail from '@/pages/Detail'
 import Order from '@/pages/Order'
 import Mine from '@/pages/Mine'
-import Login from '@/pages/Login'
 Vue.use(Router)
 
 export default new Router({
@@ -32,11 +31,6 @@ export default new Router({
       path: '/mine',
       name: 'mine',
       component: Mine
-    },
-    {
-      path: '/login',
-      name: 'login',
-      component: Login
     }
   ]
 })

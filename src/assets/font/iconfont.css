@@ -20,8 +20,8 @@
 .icon-dingdan:before { content: "\e682"; }
 
 .icon-lajitong:before { content: "\e621"; }
-
-.icon-icon05:before { content: "\e609"; }
+/*客服*/
+.icon-icon05:before { content: "\e609"; }   
 
 .icon-jifenshangcheng:before { content: "\e602"; }
 
@@ -36,4 +36,5 @@
 .icon-gouwuche:before { content: "\e501"; }
 
 .icon-iconjia:before { content: "\e50b"; }
+
 

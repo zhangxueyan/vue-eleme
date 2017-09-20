@@ -8,9 +8,6 @@
        <div class="home-sea">
        	<input type="text" placeholder="搜索商家、商品">
        </div>
-       <p class="home-key">
-        <span>辣鸭脖</span><span>辣鸭脖</span><span>辣鸭脖</span><span>辣鸭脖</span><span>辣鸭脖</span><span>辣鸭脖</span><span>辣鸭脖</span>
-       </p>
     </div>
     <div class="banner">
     	<swiper :options="swiperOption" ref="mySwiper">
@@ -27,7 +24,7 @@
     		<li class="sell-li clearfix" v-for="item in falseBussinessbrief">
     		    <router-link :to="{name:'detail',params:{id:item.id}}">
 	    			<div class="sell-pic"><img src="../assets/images/yd_03.jpg" alt=""></div>
-	    			<div class="sell-txt fl">
+	    			<div class="sell-txt sell-txt1 fl">
 	    				<p>{{item.shop_name}}</p>
 	    				<p>{{item.shop_rating}}分</p>
 	    				<p>{{item.start_send}}元起送</p>
@@ -88,7 +85,7 @@ export default {
 }
 .home-top {
 	background:#0097ff;
-	padding:0.2rem 0.2rem 0;
+	padding:0.2rem;
 	.home-txt{
 		height: 0.36rem;
 		.home-pos{
@@ -120,16 +117,6 @@ export default {
 			text-align:center;
 		}
 	}
-	.home-key {
-		overflow:hidden;
-		text-overflow:ellipsis;
-		white-space:nowrap;
-		span{
-			font-size: 0.24rem;
-			color: #fff;
-			padding:0 0.05rem;
-		}
-	}
 }
 .banner img{
 	display: block;
@@ -156,6 +143,14 @@ export default {
 		.sell-txt{
 			font-size:0.22rem;
 			color: #000;
+		}
+		.sell-txt1{
+			width:2.4rem;
+			p{
+				overflow: hidden;
+				text-overflow:ellipsis;
+				white-space:nowrap;
+			}
 		}
 		.fr{
 			text-align:right;

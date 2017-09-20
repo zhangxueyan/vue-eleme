@@ -2,19 +2,20 @@
   <div class="fixed">
   	<ul class="fixed-ul clearfix">
   		<li class="fixed-li">
-  			<p>外卖</p>
+  			<router-link :to="{name:'home'}">外卖</router-link>
   		</li>
   		<li class="fixed-li">
-  		    <p>订单</p>
+  		    <router-link :to="{name:'order'}">订单</router-link>
   		</li>
   		<li class="fixed-li">
-  			<p>我的</p>
+  			<router-link :to="{name:'mine'}">我的</router-link>
   		</li>
   	</ul>
   </div>
 </template>
 
 <script>
+import router from '../router'
 export default {
   name: 'fixed',
   data () {
@@ -39,7 +40,7 @@ export default {
 	.fixed-li{
 		width:2.0rem;
 		float:left;
-		p{
+		a{  display:block;
 			font-size:0.24rem;
 			font-weight:bold;
 			color: #000;
